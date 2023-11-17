@@ -10,19 +10,25 @@ export class UserService {
   constructor(private userRepository: UserRepository) { }
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
+    // Check if email is exists, throw bad request
     const isExist = await this.userRepository.findUserByEmail(createUserDto.email);
     if (isExist) throw new HttpException('Email is already signed up', HttpStatus.CONFLICT);
+    // Hash password from dto before create new user
     const hashedPassword = await hash(createUserDto.password, 10);
     const createUserDtoWithHashedPassword = { ...createUserDto, password: hashedPassword };
+    // Create new user
     return this.userRepository.createUser(createUserDtoWithHashedPassword);
   }
 
   async updateUser(id: number, updateUserDto: UpdateUserDto, currentUser: User): Promise<User> {
+    // Check if user is not admin and not owner, dto include role, throw not permission
     if (currentUser.role !== Role.Admin) {
       if (currentUser.id !== +id || updateUserDto.role)
         throw new HttpException('Not permission', HttpStatus.FORBIDDEN);
     }
+    // If dto include email, return bad request
     if (updateUserDto.email) throw new HttpException('Cannot update email user', HttpStatus.BAD_REQUEST);
+    // Update and return updated User
     const user = await this.userRepository.updateUser(id, updateUserDto);
     return user;
   }
@@ -41,9 +47,11 @@ export class UserService {
   }
 
   async findAllUsers(req: any): Promise<User[]> {
+    // Get page and page size from request query
     const page = req.query?.page ?? 1;
     const pageSize = req.query?.limit ?? 5;
     const offset = (page - 1) * pageSize;
+    // Get list users with paginate
     return this.userRepository.findAllUsers(pageSize, offset);
   }
   async deleteAllUsers(): Promise<Number> {

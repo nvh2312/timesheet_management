@@ -10,8 +10,10 @@ export class TaskService {
     constructor(private taskRepository: TaskRepository, private projectService: ProjectService) { }
 
     async createTask(createTaskDto: CreateTaskDto): Promise<Task> {
+        // Check if project not exists, throw bad request
         const isExist = await this.projectService.findProjectById(createTaskDto.projectId);
         if (!isExist) throw new HttpException('Project not found', HttpStatus.BAD_REQUEST);
+        // Create new Task for project
         return this.taskRepository.createTask(createTaskDto);
     }
 
@@ -35,9 +37,11 @@ export class TaskService {
     }
 
     async findAllTasks(req: any): Promise<Task[]> {
+        // Get page and page size from request query.
         const page = req.query?.page ?? 1;
         const pageSize = req.query?.limit ?? 5;
         const filter: any = {};
+        // Add filter if request query include projectId||name||archive=true
         if (req.query?.projectId) {
             filter.projectId = req.query.projectId;
         }
@@ -52,6 +56,7 @@ export class TaskService {
             } : null;
         }
         const offset = (page - 1) * pageSize;
+        // Get list tasks with filter and paginate
         return this.taskRepository.findAllTasks(pageSize, offset, filter);
     }
 

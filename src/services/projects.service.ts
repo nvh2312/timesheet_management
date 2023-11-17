@@ -9,13 +9,17 @@ export class ProjectService {
     constructor(private ProjectRepository: ProjectRepository, private ClientRepository: ClientRepository) { }
 
     async createProject(CreateProjectDto: CreateProjectDto): Promise<Project> {
+        // Check if client not found, throw a bad request
         const client = await this.ClientRepository.findClientById(CreateProjectDto.clientId);
         if (!client) throw new HttpException('Invalid Client', HttpStatus.BAD_REQUEST);
+        // Create new project
         return this.ProjectRepository.createProject(CreateProjectDto);
     }
 
     async updateProject(id: number, updateProjectDto: UpdateProjectDto): Promise<Project> {
+        // Check if the updateProjectDto contains clientId field throw exception
         if (updateProjectDto.clientId) throw new HttpException('Cannot change Client', HttpStatus.BAD_REQUEST);
+        // Update project with dto
         const Project = await this.ProjectRepository.updateProject(id, updateProjectDto);
         return Project;
     }
@@ -31,9 +35,11 @@ export class ProjectService {
     }
 
     async findAllProjects(req: any): Promise<Project[]> {
+        // Get page and pageSize from request query
         const page = req.query?.page ?? 1;
         const pageSize = req.query?.limit ?? 5;
         const offset = (page - 1) * pageSize;
+        // Get list of projects with pagesize and offset
         return this.ProjectRepository.findAllProjects(pageSize, offset);
     }
 

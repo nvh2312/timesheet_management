@@ -39,6 +39,7 @@ export class TimeSheet extends Model<TimeSheet> {
 
     @BeforeCreate
     @BeforeUpdate
+    // Check if user not in project before create or update timesheet
     static checkProjectBelongsToUser(instance: TimeSheet) {
         return User.findByPk(instance.userId, { include: [Project] }).then((user: any) => {
             if (!user || !user.dataValues.projects.some((project) => project.id === instance.projectId)) {
@@ -48,6 +49,7 @@ export class TimeSheet extends Model<TimeSheet> {
     }
 
     @BeforeCreate
+    // Customize exception from unique date-user in timesheet
     static checkUniqueDate(instance: TimeSheet) {
         return TimeSheet.findOne({ where: { userId: instance.userId, date: instance.date } }).then((existingTimeSheet) => {
             if (existingTimeSheet) {
