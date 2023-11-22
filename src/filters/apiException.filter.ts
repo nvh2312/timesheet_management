@@ -10,7 +10,7 @@ export class ApiExceptionFilter implements ExceptionFilter {
         const res = ctx.getResponse<Response>();
         const req = ctx.getRequest<Request>();
         const status = exception.getStatus();
-        const message = typeof exception.getResponse() !== "object" ? exception.getResponse() : "error";
+        const message = typeof exception.getResponse() !== "object" ? exception.getResponse() : exception.getResponse()['message'];
         if (status >= 500) {
             this.logger.error(`${new Date()} ${req.method} ${req.url} ${req.protocol} ${res.statusCode} `);
         }
