@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { CreateTaskDto, UpdateTaskDto } from '../dto/tasks.dto';
 import { TaskService } from '../services/tasks.service';
 import { Roles } from '../decorators/roles.decorator';
@@ -18,7 +18,6 @@ export class TaskController {
     @Roles(Role.Admin)
     @UseGuards(JwtGuard, RolesGuard)
     @Post()
-    @UsePipes(new ValidationPipe())
     createTask(@Body() createTaskDto: CreateTaskDto) {
         return this.taskService.createTask(createTaskDto);
     }
@@ -33,7 +32,6 @@ export class TaskController {
     @Roles(Role.Admin)
     @UseGuards(JwtGuard, RolesGuard)
     @Patch(':id')
-    @UsePipes(new ValidationPipe())
     updateTask(@Param('id') id: number, @Body() updateTaskDto: UpdateTaskDto) {
         return this.taskService.updateTask(id, updateTaskDto);
     }

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { CreateClientDto, UpdateClientDto } from '../dto/clients.dto';
 import { ClientService } from '../services/clients.service';
 import { Roles } from '../decorators/roles.decorator';
@@ -19,7 +19,6 @@ export class ClientController {
     }
 
     @Post()
-    @UsePipes(new ValidationPipe())
     createClient(@Body() createClientDto: CreateClientDto) {
         return this.clientService.createClient(createClientDto);
     }
@@ -30,7 +29,6 @@ export class ClientController {
     }
 
     @Patch(':id')
-    @UsePipes(new ValidationPipe())
     updateClient(@Param('id') id: number, @Body() updateClientDto: UpdateClientDto) {
         return this.clientService.updateClient(id, updateClientDto);
     }

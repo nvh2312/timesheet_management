@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { CreateProjectDto, UpdateProjectDto } from '../dto/projects.dto';
 import { ProjectService } from '../services/projects.service';
 import { Roles } from '../decorators/roles.decorator';
@@ -20,7 +20,6 @@ export class ProjectController {
     @Roles(Role.Admin)
     @UseGuards(JwtGuard, RolesGuard)
     @Post()
-    @UsePipes(new ValidationPipe())
     createProject(@Body() createProjectDto: CreateProjectDto) {
         return this.ProjectService.createProject(createProjectDto);
     }
@@ -28,7 +27,6 @@ export class ProjectController {
     @Roles(Role.Admin)
     @UseGuards(JwtGuard, RolesGuard)
     @Patch(':id')
-    @UsePipes(new ValidationPipe())
     updateProject(@Param('id') id: number, @Body() updateProjectDto: UpdateProjectDto) {
         return this.ProjectService.updateProject(id, updateProjectDto);
     }

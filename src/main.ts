@@ -5,6 +5,7 @@ import { ApiTransform } from './interceptors/apiTransform.interceptor';
 import { LoggingInterceptor } from './interceptors/logging.interceptor';
 import { ApiExceptionFilter } from './filters/apiException.filter';
 import { LoggerService } from './services/logger.service';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -12,6 +13,7 @@ async function bootstrap() {
   });
 
   app.useGlobalInterceptors(app.get(LoggingInterceptor));
+  app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new ApiExceptionFilter(app.get(LoggerService)));
   app.useGlobalInterceptors(new ApiTransform(new Reflector()))
   const config = new DocumentBuilder()

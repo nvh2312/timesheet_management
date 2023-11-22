@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { CreateProjectUserDto } from '../dto/projectUsers.dto';
 import { ProjectUserService } from '../services/projectUsers.service';
 import { Roles } from '../decorators/roles.decorator';
@@ -19,7 +19,6 @@ export class ProjectUserController {
     @Roles(Role.Admin)
     @UseGuards(JwtGuard, RolesGuard)
     @Post()
-    @UsePipes(new ValidationPipe())
     createProjectUser(@Body() createProjectUserDto: CreateProjectUserDto) {
         return this.projectUserService.createProjectUser(createProjectUserDto);
     }
@@ -32,7 +31,6 @@ export class ProjectUserController {
     }
 
     @Get(':projectId')
-    @UsePipes(new ValidationPipe())
     getProjectUsers(@Param('projectId') projectId: number, @Req() request: any) {
         return this.projectUserService.findProjectUsers(projectId, request);
     }
