@@ -3,6 +3,8 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ApiTransform } from './interceptors/apiTransform.interceptor';
 import { LoggingInterceptor } from './interceptors/logging.interceptor';
+import { ApiExceptionFilter } from './filters/apiException.filter';
+import { LoggerService } from './services/logger.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -10,6 +12,8 @@ async function bootstrap() {
   });
 
   app.useGlobalInterceptors(app.get(LoggingInterceptor));
+  app.useGlobalFilters(new ApiExceptionFilter(app.get(LoggerService)));
+  app.useGlobalInterceptors(new ApiTransform(new Reflector()))
   const config = new DocumentBuilder()
     .setTitle('Timesheet Management')
     .setDescription('Api for project training')
@@ -17,7 +21,6 @@ async function bootstrap() {
     .addTag('List Api')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  app.useGlobalInterceptors(new ApiTransform(new Reflector()))
   SwaggerModule.setup('api', app, document);
   await app.listen(3000);
 }
