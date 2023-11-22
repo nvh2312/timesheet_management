@@ -1,6 +1,7 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ApiTransform } from './interceptors/apiTransform.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -11,6 +12,7 @@ async function bootstrap() {
     .addTag('List Api')
     .build();
   const document = SwaggerModule.createDocument(app, config);
+  app.useGlobalInterceptors(new ApiTransform(new Reflector()))
   SwaggerModule.setup('api', app, document);
   await app.listen(3000);
 }
