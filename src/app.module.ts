@@ -8,6 +8,7 @@ import { ProjectsModule } from './modules/projects.module';
 import { ProjectUsersModule } from './modules/projectUser.module';
 import { TasksModule } from './modules/tasks.module';
 import { TimeSheetsModule } from './modules/timesheets.module';
+import { LoggerModule } from './modules/logger.module';
 
 @Module({
   imports: [
@@ -18,7 +19,8 @@ import { TimeSheetsModule } from './modules/timesheets.module';
     ProjectsModule,
     ProjectUsersModule,
     TasksModule,
-    TimeSheetsModule
+    TimeSheetsModule,
+    LoggerModule
   ],
   controllers: [],
   providers: [],

@@ -2,9 +2,14 @@ import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ApiTransform } from './interceptors/apiTransform.interceptor';
+import { LoggingInterceptor } from './interceptors/logging.interceptor';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    bufferLogs: true,
+  });
+
+  app.useGlobalInterceptors(app.get(LoggingInterceptor));
   const config = new DocumentBuilder()
     .setTitle('Timesheet Management')
     .setDescription('Api for project training')
